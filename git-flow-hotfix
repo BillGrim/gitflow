@@ -122,6 +122,18 @@ cmd_help() {
 	exit 0
 }
 
+parse_args_start() {
+	# parse options
+	FLAGS "$@" || exit $?
+	eval set -- "${FLAGS_ARGV}"
+
+	# read arguments into global variables
+	VERSION=$1
+	# BRANCH=$PREFIX$VERSION
+	DATE_PREFIX=$(date +"%Y-%m-%d_")
+	BRANCH=$PREFIX$DATE_PREFIX$VERSION
+}
+
 parse_args() {
 	# parse options
 	FLAGS "$@" || exit $?
@@ -158,7 +170,7 @@ require_no_existing_hotfix_branches() {
 
 cmd_start() {
 	DEFINE_boolean fetch false "fetch from $ORIGIN before performing finish" F
-	parse_args "$@"
+	parse_args_start "$@"
 	BASE=${2:-$MASTER_BRANCH}
 	require_version_arg
 	require_base_is_on_master

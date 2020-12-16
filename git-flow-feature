@@ -172,6 +172,18 @@ name_or_current() {
 	fi
 }
 
+parse_start_args() {
+	# parse options
+	FLAGS "$@" || exit $?
+	eval set -- "${FLAGS_ARGV}"
+
+	# read arguments into global variables
+	NAME=$1
+	# BRANCH=$PREFIX$NAME
+	DATE_PREFIX=$(date +"%Y-%m-%d_")
+	BRANCH=$PREFIX$DATE_PREFIX$NAME
+}
+
 parse_args() {
 	# parse options
 	FLAGS "$@" || exit $?
@@ -195,7 +207,7 @@ parse_remote_name() {
 
 cmd_start() {
 	DEFINE_boolean fetch false 'fetch from origin before performing local operation' F
-	parse_args "$@"
+	parse_start_args "$@"
 	BASE=${2:-$DEVELOP_BRANCH}
 	require_name_arg
 

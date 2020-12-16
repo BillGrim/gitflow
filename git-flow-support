@@ -122,6 +122,19 @@ cmd_help() {
 	exit 0
 }
 
+parse_args_start() {
+	# parse options
+	FLAGS "$@" || exit $?
+	eval set -- "${FLAGS_ARGV}"
+
+	# read arguments into global variables
+	VERSION=$1
+	BASE=$2
+	# BRANCH=$PREFIX$VERSION
+	DATE_PREFIX=$(date +"%Y-%m-%d_")
+	BRANCH=$PREFIX$DATE_PREFIX$VERSION
+}
+
 parse_args() {
 	# parse options
 	FLAGS "$@" || exit $?
@@ -159,7 +172,7 @@ require_base_is_on_master() {
 
 cmd_start() {
 	DEFINE_boolean fetch false "fetch from $ORIGIN before performing finish" F
-	parse_args "$@"
+	parse_args_start "$@"
 	require_version_arg
 	require_base_arg
 	require_base_is_on_master
